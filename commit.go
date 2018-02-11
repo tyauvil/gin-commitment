@@ -1,21 +1,36 @@
-// Golang version of 
+// Golang version of https://github.com/ngerakines/commitment
 
 package main
 
 import (
-	//"fmt"
-	"math/rand"
+	cryptorand "crypto/rand"
+	"encoding/binary"
 	"io/ioutil"
+	"log"
+	"math/rand"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-//func name() string {
-//}
+func init() {
+	randbytes := make([]byte, 8)
+	_, err := cryptorand.Read(randbytes)
+	if err != nil {
+		log.Println("error:", err)
+		return
+	}
+	randint64 := int64(binary.BigEndian.Uint64(randbytes))
+	rand.Seed(randint64)
+	log.Println(randint64)
+	log.Println("Starting gin-commitment server...")
+}
 
 func load_messages() []string {
-	file, _ := ioutil.ReadFile("./commit_messages.txt")
+	file, err := ioutil.ReadFile("./commit_messages.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
 	messages := strings.Split(string(file), "\n")
 	return messages
 }
@@ -28,7 +43,6 @@ func message(m []string) string {
 
 func main() {
 	r := gin.Default()
-	//names := []string{"Nick", "Steve", "Andy", "Qi", "Fanny", "Sarah", "Cord", "Todd", "Chris", "Pasha", "Gabe", "Tony", "Jason", "Randal", "Ali", "Kim", "Rainer", "Guillaume", "Kelan", "David", "John", "Stephen", "Tom", "Steven", "Jen", "Marcus", "Edy", "Rachel"}
 	messages := load_messages()
 
 	r.GET("/", func(c *gin.Context) {
