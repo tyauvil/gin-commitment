@@ -22,7 +22,6 @@ func init() {
 	}
 	randint64 := int64(binary.BigEndian.Uint64(randbytes))
 	rand.Seed(randint64)
-	log.Println(randint64)
 	log.Println("Starting gin-commitment server...")
 }
 
@@ -50,6 +49,10 @@ func main() {
 			"message": message(messages),
 		})
 	})
+
+	r.GET("/healthz", func(c *gin.Context) {
+        c.String(200, "42")
+    })
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
