@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  gin-commitment:
+    build: .
+    environment:
+      - "GIN_MODE=debug"
+      - "PORT=8080"
+    ports:
+      - "8080:8080"
