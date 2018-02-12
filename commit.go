@@ -17,8 +17,7 @@ func init() {
 	randbytes := make([]byte, 8)
 	_, err := cryptorand.Read(randbytes)
 	if err != nil {
-		log.Println("error:", err)
-		return
+		log.Fatal(err)
 	}
 	randint64 := int64(binary.BigEndian.Uint64(randbytes))
 	rand.Seed(randint64)
@@ -34,19 +33,18 @@ func loadMessages() []string {
 	return messages
 }
 
-func message(m []string) string {
-	l := len(m)
-	r := rand.Intn(l)
+func randMessage(m []string) string {
+	r := rand.Intn(len(m))
 	return m[r]
 }
 
-func main() {
+func setupRouter() *gin.Engine {
 	r := gin.Default()
 	messages := loadMessages()
-
+	
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": message(messages),
+			"message": randMessage(messages),
 		})
 	})
 
@@ -54,5 +52,11 @@ func main() {
 		c.String(200, "42")
 	})
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+	return r
+}
+
+func main() {
+	r := setupRouter()
+
+	r.Run()
 }

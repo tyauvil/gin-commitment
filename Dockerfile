@@ -1,13 +1,14 @@
 # Build container
-FROM golang:1.9 as BUILD
+FROM golang:1-alpine as BUILD
 
 ENV CGO_ENABLED=0
 
 WORKDIR /go/src/commit
 COPY . .
 
+RUN apk add git --no-cache
 RUN go get -d -v ./...
-RUN go install -ldflags="-s -w" -v ./...
+RUN go install -ldflags="-d -s -w" -v ./...
 
 # Release container
 FROM scratch as RELEASE
