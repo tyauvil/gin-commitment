@@ -16,8 +16,6 @@ ENV GIN_MODE=release
 ENV PORT=8080
 
 COPY --from=BUILD /go/bin/* /
-COPY --from=BUILD /etc/passwd /etc/passwd
 COPY ./commit_messages.txt ./names.txt /
 
-USER nobody
 ENTRYPOINT ["/commit"]
