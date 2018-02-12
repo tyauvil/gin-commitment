@@ -51,8 +51,8 @@ func main() {
 	})
 
 	r.GET("/healthz", func(c *gin.Context) {
-        c.String(200, "42")
-    })
+		c.String(200, "42")
+	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
