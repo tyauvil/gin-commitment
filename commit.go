@@ -25,7 +25,7 @@ func init() {
 	log.Println("Starting gin-commitment server...")
 }
 
-func load_messages() []string {
+func loadMessages() []string {
 	file, err := ioutil.ReadFile("./commit_messages.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -42,7 +42,7 @@ func message(m []string) string {
 
 func main() {
 	r := gin.Default()
-	messages := load_messages()
+	messages := loadMessages()
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
