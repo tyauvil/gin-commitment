@@ -41,7 +41,7 @@ func randMessage(m []string) string {
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 	messages := loadMessages()
-	
+
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": randMessage(messages),
@@ -50,6 +50,10 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.String(200, "42")
+	})
+
+	r.GET("/commit.txt", func(c *gin.Context) {
+		c.String(200, randMessage(messages))
 	})
 
 	return r
