@@ -113,7 +113,7 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/p/:sha", func(c *gin.Context) {
 		input := c.Param("sha")
-		if isSha(input) && len(input) == 16 {
+		if isSha(input) && len(input) == 8 {
 			if _, ok := msgs[input]; ok {
 				c.HTML(http.StatusOK, "index.tmpl", gin.H{
 					"message":   msgs[input],
