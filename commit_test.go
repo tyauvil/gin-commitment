@@ -16,7 +16,7 @@ func TestPingRoute(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, "42", w.Body.String())
+	assert.Equal(t, "OK", w.Body.String())
 }
 
 func TestCommittxtRoute(t *testing.T) {
@@ -27,7 +27,6 @@ func TestCommittxtRoute(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	//assert.Equal(t, "42", w.Body.String())
 }
 
 func TestRootRoute(t *testing.T) {
