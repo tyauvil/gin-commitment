@@ -17,6 +17,6 @@ ENV GIN_MODE=release
 ENV PORT=8080
 
 COPY --from=BUILD /go/bin/* /
-COPY ./commit_messages.txt ./names.txt /
+COPY ./commit_messages.txt ./names.txt ./index.tmpl /
 
 ENTRYPOINT ["/commit"]
