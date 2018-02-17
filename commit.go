@@ -10,12 +10,15 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
 
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func randomInit() {
@@ -28,7 +31,7 @@ func randomInit() {
 	rand.Seed(randint64)
 }
 
-type Name struct {
+type Format struct {
 	Fname  string
 	FnameU string
 	FnameL string
@@ -65,7 +68,7 @@ func randMessage() map[string]string {
 		nl := strIntRangeRand(1, 10)
 		nm := strIntRangeRand(20, 75)
 		nh := strIntRangeRand(50, 99)
-		t := Name{fn, fnu, fnl, nl, nm, nh}
+		t := Format{fn, fnu, fnl, nl, nm, nh}
 		var b bytes.Buffer
 		tmpl, err := template.New("wtc").Parse(v)
 		if err != nil {
@@ -150,7 +153,22 @@ func setupRouter() *gin.Engine {
 func main() {
 	randomInit()
 	r := setupRouter()
-	r.Run()
+	domain := os.Getenv("DOMAIN")
+	if os.Getenv("TLS") == "true" {
+		m := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(domain),
+			Cache:      autocert.DirCache("/etc/ssl/.cache"),
+		}
+		s := &http.Server{
+			Handler: m.HTTPHandler(nil),
+			Addr:    ":80",
+		}
+		go s.ListenAndServe()
+		log.Fatal(autotls.RunWithManager(r, &m))
+	} else {
+		r.Run()
+	}
 }
 
 func init() {

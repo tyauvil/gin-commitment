@@ -17,6 +17,7 @@ ENV GIN_MODE=release
 ENV PORT=8080
 
 COPY --from=BUILD /go/bin/* /
+COPY --from=BUILD /etc/ssl/certs/ /etc/ssl/certs/
 COPY ./commit_messages.txt ./names.txt ./index.tmpl /
 
 ENTRYPOINT ["/commit"]
