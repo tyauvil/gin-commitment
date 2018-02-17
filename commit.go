@@ -10,11 +10,13 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
 
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +30,7 @@ func randomInit() {
 	rand.Seed(randint64)
 }
 
-type Name struct {
+type Format struct {
 	Fname  string
 	FnameU string
 	FnameL string
@@ -65,7 +67,7 @@ func randMessage() map[string]string {
 		nl := strIntRangeRand(1, 10)
 		nm := strIntRangeRand(20, 75)
 		nh := strIntRangeRand(50, 99)
-		t := Name{fn, fnu, fnl, nl, nm, nh}
+		t := Format{fn, fnu, fnl, nl, nm, nh}
 		var b bytes.Buffer
 		tmpl, err := template.New("wtc").Parse(v)
 		if err != nil {
@@ -150,6 +152,10 @@ func setupRouter() *gin.Engine {
 func main() {
 	randomInit()
 	r := setupRouter()
+	domain := os.Getenv("DOMAIN")
+	if os.Getenv("TLS") == "true" {
+		log.Fatal(autotls.Run(r, domain))
+	}
 	r.Run()
 }
 
