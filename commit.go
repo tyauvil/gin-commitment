@@ -78,7 +78,6 @@ func randMessage() map[string]string {
 		msg := b.String()
 		sha256msg := sha256.Sum256([]byte(msg))
 		strsha256msg := fmt.Sprintf("%x", sha256msg[:4])
-		//log.Println(strsha256msg)
 		mapMsg[strsha256msg] = msg
 	}
 	return mapMsg
