@@ -172,5 +172,5 @@ func main() {
 }
 
 func init() {
-	log.Println("Starting gin-commitment server: 0.0.2")
+	log.Println("Starting gin-commitment server: 0.0.3")
 }
