@@ -78,7 +78,6 @@ func randMessage() map[string]string {
 		msg := b.String()
 		sha256msg := sha256.Sum256([]byte(msg))
 		strsha256msg := fmt.Sprintf("%x", sha256msg[:4])
-		//log.Println(strsha256msg)
 		mapMsg[strsha256msg] = msg
 	}
 	return mapMsg
@@ -113,7 +112,7 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/p/:sha", func(c *gin.Context) {
 		input := c.Param("sha")
-		if isSha(input) && len(input) == 16 {
+		if isSha(input) && len(input) == 8 {
 			if _, ok := msgs[input]; ok {
 				c.HTML(http.StatusOK, "index.tmpl", gin.H{
 					"message":   msgs[input],
