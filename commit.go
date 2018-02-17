@@ -18,6 +18,7 @@ import (
 
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func randomInit() {
@@ -154,9 +155,20 @@ func main() {
 	r := setupRouter()
 	domain := os.Getenv("DOMAIN")
 	if os.Getenv("TLS") == "true" {
-		log.Fatal(autotls.Run(r, domain))
+		m := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(domain),
+			Cache:      autocert.DirCache("/etc/ssl/.cache"),
+		}
+		s := &http.Server{
+			Handler: m.HTTPHandler(nil),
+			Addr:    ":80",
+		}
+		go s.ListenAndServe()
+		log.Fatal(autotls.RunWithManager(r, &m))
+	} else {
+		r.Run()
 	}
-	r.Run()
 }
 
 func init() {
