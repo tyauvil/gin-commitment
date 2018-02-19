@@ -108,7 +108,7 @@ func randomInit() {
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.LoadHTMLGlob("./static/index.tmpl")
+	r.LoadHTMLGlob("./static/index.html")
 	msgs := randMessage()
 	keys := []string{}
 	for k := range msgs {
@@ -117,7 +117,7 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/", func(c *gin.Context) {
 		key := keys[rand.Intn(len(keys))]
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		c.HTML(http.StatusOK, "index.html", gin.H{
 			"message":   msgs[key],
 			"permalink": key,
 		})
@@ -127,9 +127,9 @@ func setupRouter() *gin.Engine {
 		input := c.Param("sha")
 		if isHex(input) && len(input) == 8 {
 			if k, ok := msgs[input]; ok {
-				c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				c.HTML(http.StatusOK, "index.html", gin.H{
 					"message":   k,
-					"permalink": msgs[k],
+					"permalink": input,
 				})
 			}
 		} else {
