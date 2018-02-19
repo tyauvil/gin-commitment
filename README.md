@@ -7,11 +7,11 @@ https://github.com/gin-gonic/gin
 #### Endpoints
 This app implements the following endpoints:
 ```
-/ - returns html page with the commit message
-/p/:sha - permanent link to a html commit message based on short sha256 hash
-/json - returns message in json format { "message" : "wip" }
+/           - returns html page with the commit message
+/p/:sha     - permanent link to a html commit message based on short sha256 hash
+/json       - returns message in json format { "message" : "wip" }
 /commit.txt - returns plain text message
-/healthz - returns 200 and "OK"
+/healthz    - returns 200 and "OK"
 /robots.txt - returns generic robots.txt
 ```
 

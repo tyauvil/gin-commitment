@@ -5,31 +5,25 @@ import (
 	cryptorand "crypto/rand"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
-	"text/template"
 
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func randomInit() {
-	randbytes := make([]byte, 8)
-	_, err := cryptorand.Read(randbytes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	randint64 := int64(binary.BigEndian.Uint64(randbytes))
-	rand.Seed(randint64)
-}
+var SourceBranch = "unset"
+var SourceCommit = "unset"
+var GolangVersion = "unset"
 
 type Format struct {
 	Fname  string
@@ -51,13 +45,20 @@ func loadLines(file string) []string {
 
 func strIntRangeRand(min, max int) string {
 	x := rand.Intn(max-min) + min
-	return strconv.Itoa(x)
+	return fmt.Sprint(x)
+}
+
+func sha256sum(text string) string {
+	h := sha256.New()
+	h.Write([]byte(text))
+	sha256hash := hex.EncodeToString(h.Sum(nil))
+	return sha256hash
 }
 
 func randMessage() map[string]string {
 	rand.Seed(42) //make the messages deterministic for permalink
-	names := loadLines("./names.txt")
-	messages := loadLines("./commit_messages.txt")
+	names := loadLines("./static/names.txt")
+	messages := loadLines("./static/commit_messages.txt")
 	mapMsg := make(map[string]string)
 
 	for _, v := range messages {
@@ -79,14 +80,13 @@ func randMessage() map[string]string {
 			log.Fatal(err)
 		}
 		msg := b.String()
-		sha256msg := sha256.Sum256([]byte(msg))
-		strsha256msg := fmt.Sprintf("%x", sha256msg[:4])
-		mapMsg[strsha256msg] = msg
+		sha256msg := sha256sum(msg)
+		mapMsg[sha256msg[:8]] = msg
 	}
 	return mapMsg
 }
 
-func isSha(s string) bool {
+func isHex(s string) bool {
 	r := regexp.MustCompile(`^[a-f0-9]+$`).MatchString
 	if !r(s) {
 		log.Println("Error parsing sha256 sum.")
@@ -95,10 +95,20 @@ func isSha(s string) bool {
 	return true
 }
 
+func randomInit() {
+	randbytes := make([]byte, 8)
+	_, err := cryptorand.Read(randbytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	randint64 := int64(binary.BigEndian.Uint64(randbytes))
+	rand.Seed(randint64)
+}
+
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.LoadHTMLGlob("index.tmpl")
+	r.LoadHTMLGlob("./static/index.html")
 	msgs := randMessage()
 	keys := []string{}
 	for k := range msgs {
@@ -107,7 +117,7 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/", func(c *gin.Context) {
 		key := keys[rand.Intn(len(keys))]
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		c.HTML(http.StatusOK, "index.html", gin.H{
 			"message":   msgs[key],
 			"permalink": key,
 		})
@@ -115,10 +125,10 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/p/:sha", func(c *gin.Context) {
 		input := c.Param("sha")
-		if isSha(input) && len(input) == 8 {
-			if _, ok := msgs[input]; ok {
-				c.HTML(http.StatusOK, "index.tmpl", gin.H{
-					"message":   msgs[input],
+		if isHex(input) && len(input) == 8 {
+			if k, ok := msgs[input]; ok {
+				c.HTML(http.StatusOK, "index.html", gin.H{
+					"message":   k,
 					"permalink": input,
 				})
 			}
@@ -158,7 +168,7 @@ func main() {
 		m := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(domain),
-			Cache:      autocert.DirCache("/etc/ssl/.cache"),
+			Cache:      autocert.DirCache("./cache"),
 		}
 		s := &http.Server{
 			Handler: m.HTTPHandler(nil),
@@ -172,5 +182,7 @@ func main() {
 }
 
 func init() {
-	log.Println("Starting gin-commitment server: 0.0.3")
+	log.Println("Starting gin-commitment release: ", SourceBranch)
+	log.Println("Git SHA: ", SourceCommit)
+	log.Println("Go version: ", GolangVersion)
 }
