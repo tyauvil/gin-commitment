@@ -6,5 +6,7 @@ services:
     environment:
       - "GIN_MODE=debug"
       - "PORT=8080"
+      - SOURCE_COMMIT
+      - SOURCE_BRANCH
     ports:
       - "8080:8080"

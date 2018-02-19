@@ -21,7 +21,9 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-var VersionString = "unset"
+var SourceBranch = "unset"
+var SourceCommit = "unset"
+var GolangVersion = "unset"
 
 type Format struct {
 	Fname  string
@@ -180,5 +182,7 @@ func main() {
 }
 
 func init() {
-	log.Println("Starting gin-commitment Version: ", VersionString)
+	log.Println("Starting gin-commitment release: ", SourceBranch)
+	log.Println("Git SHA: ", SourceCommit)
+	log.Println("Go version: ", GolangVersion)
 }
