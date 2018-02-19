@@ -11,8 +11,6 @@ COPY . .
 RUN apk add git --no-cache
 RUN go get -d -v ./...
 RUN go install -ldflags="-d -s -w -X main.SourceBranch=$SOURCE_BRANCH -X main.GolangVersion=$GOLANG_VERSION -X main.SourceCommit=$SOURCE_COMMIT" -v ./...
-RUN echo "nobody:x:65534:65534:nobody:/:/sbin/nologin" > /tmp/passwd
-RUN chmod 400 /tmp/passwd
 
 # Release container
 FROM scratch as RELEASE
@@ -22,11 +20,7 @@ ENV PORT=8080
 
 COPY --from=BUILD /go/bin/* /usr/local/bin/
 COPY --from=BUILD /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=BUILD /tmp/passwd /etc/passwd
-COPY --from=BUILD /sbin/nologin /sbin/nologin
 COPY ./static /static
-
-USER 65534
 
 EXPOSE 80 443 8080
 ENTRYPOINT ["app"]
