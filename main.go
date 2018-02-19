@@ -168,7 +168,7 @@ func main() {
 		m := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(domain),
-			Cache:      autocert.DirCache("./cache"),
+			Cache:      autocert.DirCache("/cache"),
 		}
 		s := &http.Server{
 			Handler: m.HTTPHandler(nil),
