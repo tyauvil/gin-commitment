@@ -25,6 +25,7 @@ var SourceBranch = "unset"
 var SourceCommit = "unset"
 var GolangVersion = "unset"
 
+// Format for the template
 type Format struct {
 	Fname  string
 	FnameU string
@@ -32,6 +33,14 @@ type Format struct {
 	NumL   string
 	NumM   string
 	NumH   string
+}
+
+func getEnv(envvar, def string) string {
+	val, env := os.LookupEnv(envvar)
+	if !env {
+		val = def
+	}
+	return val
 }
 
 func loadLines(file string) []string {
@@ -163,12 +172,13 @@ func setupRouter() *gin.Engine {
 func main() {
 	randomInit()
 	r := setupRouter()
-	domain := os.Getenv("DOMAIN")
+	domain := getEnv("DOMAIN", "localhost")
+	dirCache := getEnv("DIRCACHE", "/cache")
 	if os.Getenv("TLS") == "true" {
 		m := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(domain),
-			Cache:      autocert.DirCache("/cache"),
+			Cache:      autocert.DirCache(dirCache),
 		}
 		s := &http.Server{
 			Handler: m.HTTPHandler(nil),
