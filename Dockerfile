@@ -18,9 +18,9 @@ FROM scratch as RELEASE
 ENV GIN_MODE=release
 ENV PORT=8080
 
-COPY --from=BUILD /go/bin/* /
-COPY --from=BUILD /etc/ssl/certs/ /etc/ssl/certs/
+COPY --from=BUILD /go/bin/* /usr/local/bin/
+COPY --from=BUILD /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY ./static /static
 
 EXPOSE 80 443 8080
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["app"]
