@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Commit Message Generator</title>
+    <style>
+        body {
+            font-family: 'Lucida Console', 'Courier New', monospace;
+            font-size: 26pt;
+            color: #009900;
+            background: #000000;
+            line-height: 1.2em;
+        }
+        #content {
+            width: 760px;
+            text-align: left;
+            margin: 1em auto;
+        }
+        .permalink {
+            font-size: .5em;
+            color: #949494;
+            line-height: 1em;
+        }
+        .permalink a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .permalink a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <audio autoplay>
+        <source src="https://storage.googleapis.com/astroblues/xfiles_short.ogg" type="audio/ogg">
+    </audio>
+    <div id="content">
+        <p>Time since First Contact: {{ .message }}</p>
+        <p class="permalink">
+            [<a href="/👽">permalink</a>]
+        </p>
+    </div>
+</body>
+<!-- Like what you see? http://github.com/tyauvil/gin-commitment -->
+</html>
