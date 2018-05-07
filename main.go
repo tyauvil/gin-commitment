@@ -152,7 +152,8 @@ func setupRouter() *gin.Engine {
 		today := time.Now()
 		since := today.Sub(roswellDate).String()
 		c.HTML(http.StatusOK, "alien.tmpl.html", gin.H{
-			"message": since,
+			"message":   since,
+			"permalink": since,
 		})
 	})
 
