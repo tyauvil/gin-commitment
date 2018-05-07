@@ -15,6 +15,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
@@ -117,7 +118,9 @@ func randomInit() {
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.LoadHTMLGlob("./static/index.html")
+	roswellDate := time.Date(1947, 7, 14, 0, 0, 0, 0, time.UTC)
+
+	r.LoadHTMLGlob("./static/*.tmpl.html")
 	msgs := randMessage()
 	keys := []string{}
 	for k := range msgs {
@@ -126,7 +129,7 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/", func(c *gin.Context) {
 		key := keys[rand.Intn(len(keys))]
-		c.HTML(http.StatusOK, "index.html", gin.H{
+		c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
 			"message":   msgs[key],
 			"permalink": key,
 		})
@@ -134,16 +137,24 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/p/:sha", func(c *gin.Context) {
 		input := c.Param("sha")
-		if isHex(input) && len(input) == 8 {
-			if k, ok := msgs[input]; ok {
-				c.HTML(http.StatusOK, "index.html", gin.H{
-					"message":   k,
-					"permalink": input,
-				})
-			}
+		msg := msgs[input]
+		if isHex(input) && len(input) == 8 && msg != "" {
+			c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
+				"message":   msg,
+				"permalink": input,
+			})
 		} else {
 			c.String(http.StatusBadRequest, "400 Bad Request")
 		}
+	})
+
+	r.GET("/👽", func(c *gin.Context) {
+		today := time.Now()
+		since := today.Sub(roswellDate).String()
+		c.HTML(http.StatusOK, "alien.tmpl.html", gin.H{
+			"message":   since,
+			"permalink": since,
+		})
 	})
 
 	r.GET("/commit.txt", func(c *gin.Context) {
