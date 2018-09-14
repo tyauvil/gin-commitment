@@ -1,5 +1,5 @@
 # gin-commitment
-[![CircleCI](https://circleci.com/gh/tyauvil/gin-commitment/tree/develop.svg?style=svg)](https://circleci.com/gh/tyauvil/gin-commitment/tree/develop)
+[![CircleCI](https://circleci.com/gh/tyauvil/gin-commitment/tree/master.svg?style=svg)](https://circleci.com/gh/tyauvil/gin-commitment/tree/master)
 
 ### Go webapp using Gin framework
 https://github.com/gin-gonic/gin
