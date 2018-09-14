@@ -1,5 +1,5 @@
 # Build container
-FROM golang:1.10-alpine as BUILD
+FROM golang:1.11-alpine as BUILD
 
 ENV CGO_ENABLED=0
 ARG SOURCE_COMMIT=""
