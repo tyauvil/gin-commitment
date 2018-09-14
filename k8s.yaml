@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commitment-deployment
+  labels:
+    app: commitment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: commitment
+  template:
+    metadata:
+      labels:
+        app: commitment
+    spec:
+      containers:
+      - name: commitment
+        image: tyauvil/gin-commitment:latest
+        ports:
+        - containerPort: 8080
+
