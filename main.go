@@ -150,9 +150,10 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/👽", func(c *gin.Context) {
 		today := time.Now()
-		since := today.Sub(roswellDate).String()
+		since := today.Sub(roswellDate)
+		yearsSince := today.Year() - 1947
 		c.HTML(http.StatusOK, "alien.tmpl.html", gin.H{
-			"message":   since,
+			"message":   yearsSince,
 			"permalink": since,
 		})
 	})
